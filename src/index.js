@@ -5,8 +5,8 @@ import { initMongoConnection } from './db/initMongoConnection.js';
 dotenv.config();
 
 async function bootstrap() {
-    await initMongoConnection();
-    setupServer();
+  await initMongoConnection();
+  setupServer();
 }
 
 bootstrap();
