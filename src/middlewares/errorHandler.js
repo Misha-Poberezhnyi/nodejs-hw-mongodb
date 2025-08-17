@@ -4,5 +4,6 @@ export const errorHandler = (err, req, res, next) => {
   res.status(status).json({
     message: err.message || 'Something went wrong',
     status,
+    ...(err.errors && {errors: err.errors}),
   });
 };

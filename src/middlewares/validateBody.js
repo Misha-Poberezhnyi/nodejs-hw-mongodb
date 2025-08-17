@@ -7,9 +7,19 @@ export const validateBody = (schema) => async (req, res, next) => {
         });
         next();
     } catch (err) {
-        const error = createHttpError(400, 'Bad Request', {
-            errors: err.details
-        });
-        next(error);
+        if (err.isJoi) {
+            const validationErrors = err.details.map(detail => ({
+                field: detail.path.join('.'),
+                message: detail.message,
+            }));
+
+            const error = createHttpError(400, 'Bad Request');
+            error.errors = validationErrors;
+
+            return next(error);
+
+        }
+
+        next(err);
     }
 };
