@@ -23,7 +23,7 @@ export const getContactsAll = async (req, res) => {
     filter.isFavourite = req.query.isFavourite === 'true';
   }
 
-  const [contacts, totalItems] = await Promise.all([Contact.find().sort(sortOptions).skip(skip).limit(perPage), Contact.countDocuments(filter),]);
+  const [contacts, totalItems] = await Promise.all([Contact.find(filter).sort(sortOptions).skip(skip).limit(perPage), Contact.countDocuments(filter),]);
 
   const totalPages = Math.ceil(totalItems / perPage);
 

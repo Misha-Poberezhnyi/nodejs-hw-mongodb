@@ -1,4 +1,5 @@
 import { ONE_DAY } from "../constants/index.js";
+import { SessionsCollection } from "../db/models/session.js";
 import { loginUser, logoutUser, refreshUsersSession, registerUser } from "../services/auth.js"
 
 export const registerUserController = async (req, res) => {
@@ -58,9 +59,7 @@ export const refreshUserSessionController = async (req, res) => {
 
 
 export const logoutUserController = async (req, res) => {
-    if (req.cookies.sessionId) {
-        await logoutUser(req.cookies.sessionId);
-    }
+    await logoutUser(req.cookies.sessionId, req.cookies.refreshToken);
 
     res.clearCookie('sessionId');
     res.clearCookie('refreshToken');
