@@ -1,6 +1,7 @@
 import { Contact } from '../db/models/contact.js';
 import createError from 'http-errors';
-import { createContactService, deleteContactService, updateContactService } from '../services/contacts.js';
+import { createContactService, deleteContactService, updateContactService, uploadContactsPhoto } from '../services/contacts.js';
+
 
 export const getContactsAll = async (req, res) => {
 
@@ -76,6 +77,17 @@ export const createContact = async (req, res, next) => {
     data: newContact,
   });
 };
+
+export const uploadContactsPhotoController = async (req, res) => {
+  const contact = await uploadContactsPhoto(req.params.contactId, req.file)
+
+  res.send({
+    status: 200,
+    message: 'Successfully uploaded a photo for a contact!',
+    data: contact,
+  });
+
+}
 
 export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;

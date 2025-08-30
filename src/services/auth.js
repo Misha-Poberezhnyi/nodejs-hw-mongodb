@@ -1,9 +1,22 @@
 import bcrypt from "bcrypt";
+import Handlebars from "handlebars";
+import fs from 'node:fs';
+import jwt from 'jsonwebtoken';
+import path from 'node:path'
 import { randomBytes } from 'crypto';
 import { UsersCollection } from "../db/models/user.js"
 import createHttpError from "http-errors";
 import { SessionsCollection } from "../db/models/session.js";
 import { FIFTEEN_MINUTES, ONE_DAY } from "../constants/index.js";
+import { sendMail } from "../utils/sendEmail.js";
+import { getEnvVar } from "../utils/getEnvVar.js";
+import { ENV_VARS } from "../constants/envVars.js";
+import { TEMPLATE_DIR_PATH } from "../controllers/path.js";
+
+const resetPasswordTemplate = fs.readFileSync(
+    path.join(TEMPLATE_DIR_PATH, "send-reset-email-password.html"),)
+    .toString();
+
 
 export const registerUser = async (payload) => {
     const user = await UsersCollection.findOne({ email: payload.email });
@@ -87,3 +100,55 @@ export const logoutUser = async (sessionId, refreshToken) => {
         refreshToken,
     });
 };
+
+export const sendResetPasswordEmail = async (email) => {
+    const user = await UsersCollection.findOne({ email });
+
+    if (!user) {
+        throw createHttpError(404,'User not found!')
+    }
+
+    const host = getEnvVar(ENV_VARS.FRONTEND_DOMAIN);
+    const token = jwt.sign({
+        sub: user._id,
+        email: user.email,
+    }, getEnvVar(ENV_VARS.JWT_SECRET), {
+        expiresIn: '5m',
+    });
+
+    const resetPasswordLink = `${host}/reset-password?token=${token}`
+
+    const template = Handlebars.compile(resetPasswordTemplate);
+
+    const html = template({
+        name: user.name,
+        link: resetPasswordLink,
+    })
+
+    await sendMail({
+        to: email,
+        subject: 'Reset your pasword!',
+        html,
+    })
+};
+
+export const resetPassword = async (token, password) => {
+    let payload;
+
+    try {
+        payload = jwt.verify(token, getEnvVar(ENV_VARS.JWT_SECRET));
+    } catch (err) {
+        console.log(err);
+        throw createHttpError(401, err.message);
+    };
+
+    const user = await UsersCollection.findById(payload.sub);
+
+    if (!user) {
+        throw createHttpError(404, 'User not found!')
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+
+    await user.save();
+}

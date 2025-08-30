@@ -5,6 +5,7 @@ import router from '../routers/index.js';
 import { notFoundHandler } from '../middlewares/notFoundHandler.js';
 import { errorHandler } from '../middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_FILES_PATH } from '../controllers/path.js';
 
 export function setupServer() {
     const app = express();
@@ -15,6 +16,7 @@ export function setupServer() {
   app.use(pinoHttp());
   app.use(cookieParser());
 
+  app.use('/uploads', express.static(UPLOAD_FILES_PATH));
 
   app.use(router);
 
