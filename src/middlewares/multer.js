@@ -1,4 +1,5 @@
 import multer from 'multer';
+import path from 'node:path'
 import { TEMP_FILES_DIR_PATH } from '../controllers/path.js';
 
 const storage = multer.diskStorage({
@@ -11,5 +12,4 @@ const storage = multer.diskStorage({
     },
 });
 
-export const upload = multer({
-    storage: storage });
+export const upload = multer({ storage });

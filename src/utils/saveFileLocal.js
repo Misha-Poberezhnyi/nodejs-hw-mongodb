@@ -8,12 +8,11 @@ import { ENV_VARS } from '../constants/envVars.js';
 
 export const saveFileLocal = async (file) => {
   try {
-    if (!file || !file.filename || !file.path) {
+    if (!file?.filename || !file?.path) {
       throw createHttpError(400, 'Invalid file object');
     }
 
     const newPath = path.join(UPLOAD_FILES_PATH, file.filename);
-
     await fs.rename(file.path, newPath);
 
     const fileUrl = `${getEnvVar(ENV_VARS.BACKEND_DOMAIN)}/uploads/${file.filename}`;

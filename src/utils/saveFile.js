@@ -14,7 +14,7 @@ export const saveFile = async (file) => {
     const saveFileStrategy = saveFileStrategyMapper[strategyName];
 
     if (!saveFileStrategy) {
-        throw new createHttpError(500, `No strategy with name ${strategyName} provided`)
+        throw createHttpError(500, `No strategy with name ${strategyName} provided`)
     }
 
     return await saveFileStrategy(file);

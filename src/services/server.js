@@ -6,11 +6,14 @@ import { notFoundHandler } from '../middlewares/notFoundHandler.js';
 import { errorHandler } from '../middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import { UPLOAD_FILES_PATH } from '../controllers/path.js';
+import { ensureDirectoriesExist } from '../controllers/ensureDirectories.js';
 
 export function setupServer() {
-    const app = express();
+  ensureDirectoriesExist();
+  
+  const app = express();
 
-    app.use(express.json());
+  app.use(express.json());
 
   app.use(cors());
   app.use(pinoHttp());

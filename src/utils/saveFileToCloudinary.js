@@ -12,6 +12,10 @@ cloudinary.config({
 
 export const saveFileToCloudinary = async (file) => {
   try {
+    if (!file?.path) {
+      throw createHttpError(400, 'File path is missing for Cloudinary upload');
+    }
+
     const result = await cloudinary.v2.uploader.upload(file.path, {
       folder: 'contacts',
     });
@@ -21,7 +25,7 @@ export const saveFileToCloudinary = async (file) => {
 
     return result.secure_url;
   } catch (err) {
-    console.error(err);
+    console.error('Error uploading to Cloudinary:', err);
     throw createHttpError(500, 'Failed to save file to cloudinary');
   }
 };
