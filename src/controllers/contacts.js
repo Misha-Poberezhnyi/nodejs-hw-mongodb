@@ -1,6 +1,7 @@
 import { Contact } from '../db/models/contact.js';
 import createError from 'http-errors';
 import { createContactService, deleteContactService, updateContactService, uploadContactsPhoto } from '../services/contacts.js';
+import { saveFile } from '../utils/saveFile.js';
 
 
 export const getContactsAll = async (req, res) => {
@@ -61,12 +62,18 @@ export const getContactById = async (req, res) => {
 export const createContact = async (req, res, next) => {
   const { name, phoneNumber, contactType, email, isFavourite } = req.body;
 
+  let photoURL = null;
+  if (req.file) {
+    photoURL = await saveFile(req.file);
+  }
+
   const newContact = await createContactService({
     name,
     phoneNumber,
     contactType,
     email,
     isFavourite,
+    photo: photoURL,
   },
   req.user._id
   );
@@ -91,17 +98,23 @@ export const uploadContactsPhotoController = async (req, res) => {
 
 export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const updateData = req.body;
+  const updateData = { ...req.body };
 
-  const updateContact = await updateContactService(contactId, updateData, req.user._id);
+  if (req.file) {
+    const photoURL = await saveFile(req.file);
+    updateData.photo = photoURL;
+  }
 
-  if (!updateContact) {
+  const updatedContact = await updateContactService(contactId, updateData, req.user._id);
+
+  if (!updatedContact) {
     throw createError(404, 'Contact not found');
   }
 
   res.status(200).json({
-    status: 200, message: 'Successfully patched a contact!',
-    data: updateContact,
+    status: 200,
+    message: 'Successfully patched a contact!',
+    data: updatedContact,
   });
 };
 

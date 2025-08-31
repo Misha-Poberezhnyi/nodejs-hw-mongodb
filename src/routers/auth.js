@@ -12,8 +12,8 @@ router.post('/register', validateBody(registerUserSchema),ctrlWrapper(registerUs
 router.post('/login', validateBody(loginUserSchema), ctrlWrapper(loginUserController));
 router.post('/refresh', ctrlWrapper(refreshUserSessionController));
 router.post('/logout', ctrlWrapper(logoutUserController));
-router.post('/send-reset-password-email',validateBody(sendResetPasswordEmailShema), sendResetPasswordEmailController)
-router.post('/reset-password',validateBody(resetPasswordEmailShema),resetPasswordController);
+router.post('/send-reset-email',validateBody(sendResetPasswordEmailShema), ctrlWrapper(sendResetPasswordEmailController))
+router.post('/reset-pwd',validateBody(resetPasswordEmailShema),ctrlWrapper(resetPasswordController));
 
 
 export default router;
