@@ -1,0 +1,31 @@
+tags:
+  - Contacts
+summary: Update contact by ID
+operationId: updateContact
+description: Update the details of a contact by its ID. Partial update is allowed.
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          phone:
+            type: string
+responses:
+  '200':
+    description: Contact updated successfully
+  '404':
+    description: Contact not found

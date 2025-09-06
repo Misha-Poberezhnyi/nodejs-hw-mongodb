@@ -7,10 +7,11 @@ import { errorHandler } from '../middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import { UPLOAD_FILES_PATH } from '../controllers/path.js';
 import { ensureDirectoriesExist } from '../controllers/ensureDirectories.js';
+import { swaggerDocs } from '../middlewares/swaggerDocs.js';
 
 export function setupServer() {
   ensureDirectoriesExist();
-  
+
   const app = express();
 
   app.use(express.json());
@@ -20,6 +21,7 @@ export function setupServer() {
   app.use(cookieParser());
 
   app.use('/uploads', express.static(UPLOAD_FILES_PATH));
+  app.use('/api-docs', swaggerDocs());
 
   app.use(router);
 

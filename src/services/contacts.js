@@ -1,7 +1,5 @@
 import createHttpError from "http-errors";
 import { Contact } from "../db/models/contact.js";
-import { saveFileLocal } from "../utils/saveFileLocal.js";
-import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
 import { saveFile } from "../utils/saveFile.js";
 
 export const createContactService = async (contactData, userId) => {
