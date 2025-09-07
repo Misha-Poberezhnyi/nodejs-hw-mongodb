@@ -35,7 +35,7 @@
         ],
         "summary": "Get list of contacts",
         "operationId": "getContactsAll",
-        "description": "Get list of users with this endpoint",
+        "description": "Get list of contacts with this endpoint",
         "security": [
           {
             "bearerAuth": []
@@ -43,33 +43,33 @@
         ],
         "parameters": [
           {
-            "in": "query",
             "name": "page",
+            "in": "query",
             "schema": {
-              "type": "integer"
-            },
-            "example": 1
+              "type": "integer",
+              "example": 1
+            }
           },
           {
-            "in": "query",
             "name": "perPage",
+            "in": "query",
             "schema": {
               "type": "integer",
               "example": 10
             }
           },
           {
-            "in": "query",
             "name": "sortBy",
+            "in": "query",
             "schema": {
               "type": "string",
-              "example": "age"
-            },
-            "description": "All contact's fields can be mentioned. Default value - _id"
+              "example": "name",
+              "description": "All contact's fields can be mentioned. Default value - _id"
+            }
           },
           {
-            "in": "query",
             "name": "sortOrder",
+            "in": "query",
             "schema": {
               "type": "string",
               "enum": [
@@ -80,126 +80,33 @@
             }
           },
           {
+            "name": "type",
             "in": "query",
-            "name": "minAvgMark",
-            "schema": {
-              "type": "number",
-              "example": 4
-            }
-          },
-          {
-            "in": "query",
-            "name": "maxAvgMark",
-            "schema": {
-              "type": "number",
-              "example": 10
-            }
-          },
-          {
-            "in": "query",
-            "name": "minAge",
-            "schema": {
-              "type": "number",
-              "example": 10
-            }
-          },
-          {
-            "in": "query",
-            "name": "maxAge",
-            "schema": {
-              "type": "number",
-              "example": 16
-            }
-          },
-          {
-            "in": "query",
-            "name": "gender",
             "schema": {
               "type": "string",
               "enum": [
-                "male",
-                "female",
-                "other"
+                "work",
+                "home",
+                "personal"
               ],
-              "example": "male"
+              "example": "personal"
+            }
+          },
+          {
+            "name": "isFavourite",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "example": true
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully found contacts!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully found contacts!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "required": [
-                        "data",
-                        "page",
-                        "perPage",
-                        "totalItems",
-                        "totalPages",
-                        "hasNextPage",
-                        "hasPreviousPage"
-                      ],
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/contact"
-                          }
-                        },
-                        "page": {
-                          "type": "number",
-                          "example": 2
-                        },
-                        "perPage": {
-                          "type": "number",
-                          "example": 4
-                        },
-                        "totalItems": {
-                          "type": "number",
-                          "example": 4
-                        },
-                        "totalPages": {
-                          "type": "number",
-                          "example": 4
-                        },
-                        "hasNextPage": {
-                          "type": "boolean",
-                          "example": false
-                        },
-                        "hasPreviousPage": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/200"
           },
           "401": {
             "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
           }
         }
       },
@@ -209,63 +116,47 @@
         ],
         "summary": "Create contact",
         "operationId": "createContact",
-        "description": "Create a contact with payload",
         "security": [
           {
             "bearerAuth": []
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "required": [
                   "name",
-                  "age",
-                  "gender",
-                  "avgMark",
-                  "parentId"
+                  "phoneNumber"
                 ],
                 "properties": {
                   "name": {
-                    "description": "Contact's name",
                     "type": "string",
                     "example": "John Doe"
                   },
-                  "age": {
-                    "description": "Contact's age",
-                    "type": "number",
-                    "example": 12
-                  },
-                  "gender": {
-                    "description": "Contact's age",
+                  "phoneNumber": {
                     "type": "string",
-                    "enum": [
-                      "male",
-                      "female",
-                      "other"
-                    ]
+                    "example": 380987654321
                   },
-                  "avgMark": {
-                    "description": "Contact's average mark. Should be between 1 and 12",
-                    "type": "number",
-                    "example": 9.7
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@example.com"
                   },
-                  "onDuty": {
-                    "description": "Whether is contact on duty",
+                  "contactType": {
+                    "type": "string",
+                    "example": "personal"
+                  },
+                  "isFavourite": {
                     "type": "boolean",
                     "example": false
                   },
-                  "parentId": {
-                    "description": "Contact's parent id",
-                    "type": "string",
-                    "example": "65e4decdd286b30065d54af9"
-                  },
                   "photo": {
-                    "description": "Contact's photo",
                     "type": "string",
-                    "format": "binary"
+                    "format": "binary",
+                    "description": "Contact photo"
                   }
                 }
               }
@@ -274,30 +165,11 @@
         },
         "responses": {
           "201": {
-            "description": "Creates a contact",
+            "description": "Contact created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 201
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully created a contact!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/contact"
-                    }
-                  }
+                  "$ref": "#/components/schemas/contact"
                 }
               }
             }
@@ -377,9 +249,9 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Update contact by ID",
+        "summary": "Update contact by id",
         "operationId": "updateContact",
-        "description": "Update the details of a contact by its ID. Partial update is allowed.",
+        "description": "Update an exisiting contact by id",
         "security": [
           {
             "bearerAuth": []
@@ -387,29 +259,50 @@
         ],
         "parameters": [
           {
+            "name": "contactId",
             "in": "path",
-            "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "546sad65as4d6asd132as1d3as2d1"
             }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Jane Doe"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "example": "+380931112233"
                   },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "jane.doe@mail.com"
                   },
-                  "phone": {
-                    "type": "string"
+                  "contactType": {
+                    "type": "string",
+                    "enum": [
+                      "work",
+                      "home",
+                      "personal"
+                    ],
+                    "example": "work"
+                  },
+                  "isFavourite": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
@@ -418,10 +311,38 @@
         },
         "responses": {
           "200": {
-            "description": "Contact updated successfully"
+            "description": "Successfully patched a contact",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully patched a contact!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/contact"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "404": {
-            "description": "Contact not found"
+            "$ref": "#/components/responses/404"
           }
         }
       },
@@ -429,9 +350,9 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Delete contact by ID",
+        "summary": "Delete a contact by ID",
         "operationId": "deleteContact",
-        "description": "Permanently delete a contact by its unique ID.",
+        "description": "Delete contact by ID",
         "security": [
           {
             "bearerAuth": []
@@ -440,36 +361,23 @@
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "contactId",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "54sad45a6sd46a8fdf12sad3f1sd"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Contact deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Contact deleted"
-                    }
-                  }
-                }
-              }
-            }
+          "204": {
+            "description": "Successfully deleted, no content"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "404": {
-            "description": "Contact not found"
+            "$ref": "#/components/responses/404"
           }
         }
       }
@@ -542,6 +450,75 @@
       }
     },
     "responses": {
+      "200": {
+        "description": "Successfully found contacts!",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 200
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Successfully found contacts!"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "page",
+                    "perPage",
+                    "totalItems",
+                    "totalPages",
+                    "hasNextPage",
+                    "hasPreviousPage"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/contact"
+                      }
+                    },
+                    "page": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "perPage": {
+                      "type": "number",
+                      "example": 4
+                    },
+                    "totalItems": {
+                      "type": "number",
+                      "example": 4
+                    },
+                    "totalPages": {
+                      "type": "number",
+                      "example": 4
+                    },
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "hasPreviousPage": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "401": {
         "description": "Unauthorized error",
         "content": {
