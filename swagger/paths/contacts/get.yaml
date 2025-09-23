@@ -1,0 +1,46 @@
+tags:
+  - Contacts
+summary: Get list of contacts
+operationId: getContactsAll
+description: 'Get list of contacts with this endpoint'
+security:
+  - bearerAuth: []
+parameters:
+  - name: page
+    in: query
+    schema:
+      type: integer
+      example: 1
+  - name: perPage
+    in: query
+    schema:
+      type: integer
+      example: 10
+  - name: sortBy
+    in: query
+    schema:
+      type: string
+      example: name
+      description: All contact's fields can be mentioned. Default value - _id
+  - name: sortOrder
+    in: query
+    schema:
+      type: string
+      enum: [asc, desc]
+      example: asc
+  - name: type
+    in: query
+    schema:
+      type: string
+      enum: [work, home, personal]
+      example: personal
+  - name: isFavourite
+    in: query
+    schema:
+      type: boolean
+      example: true
+responses:
+  '200':
+    $ref: '../../components/responses/200.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'

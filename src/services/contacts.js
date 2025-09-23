@@ -1,20 +1,37 @@
-import { updateContact } from "../controllers/contacts.js";
+import createHttpError from "http-errors";
 import { Contact } from "../db/models/contact.js";
+import { saveFile } from "../utils/saveFile.js";
 
-export const createContactService = async (contactData) => {
-    const newContact = new Contact(contactData);
+export const createContactService = async (contactData, userId) => {
+    const newContact = new Contact({...contactData,userId});
     await newContact.save();
     return newContact;
 };
 
-export const updateContactService = async (contactId, updateData) => {
-    const updateContact = await Contact.findByIdAndUpdate(
-        contactId, updateData, { new: true }
+export const updateContactService = async (contactId, updateData, userId) => {
+    return await Contact.findByIdAndUpdate(
+        { _id: contactId, userId },
+        updateData,
+        { new: true }
     );
-    return updateContact;
 };
 
-export const deleteContactService = async (contactId) => {
-    const result = await Contact.findByIdAndDelete(contactId);
-    return result;
+
+export const uploadContactsPhoto = async (contactId, file) => {
+  const contact = await Contact.findById(contactId);
+  if (!contact) {
+    throw createHttpError(404, 'Contact not found!');
+  }
+
+    const filePath = await saveFile(file);
+
+  contact.photo = filePath;
+  await contact.save();
+
+  return contact;
+};
+
+
+export const deleteContactService = async (contactId, userId) => {
+    return await Contact.findOneAndDelete({ _id: contactId, userId });
 }

@@ -1,0 +1,31 @@
+import createHttpError from "http-errors";
+import fs from 'node:fs/promises';
+import cloudinary from 'cloudinary';
+import { getEnvVar } from "./getEnvVar.js";
+import { ENV_VARS } from "../constants/envVars.js";
+
+cloudinary.config({
+  cloud_name: getEnvVar(ENV_VARS.CLOUDINARY_API_PROJECT_NAME),
+  api_key: getEnvVar(ENV_VARS.CLOUDINARY_API_KEY),
+  api_secret: getEnvVar(ENV_VARS.CLOUDINARY_API_SECRET),
+});
+
+export const saveFileToCloudinary = async (file) => {
+  try {
+    if (!file?.path) {
+      throw createHttpError(400, 'File path is missing for Cloudinary upload');
+    }
+
+    const result = await cloudinary.v2.uploader.upload(file.path, {
+      folder: 'contacts',
+    });
+
+
+    await fs.unlink(file.path);
+
+    return result.secure_url;
+  } catch (err) {
+    console.error('Error uploading to Cloudinary:', err);
+    throw createHttpError(500, 'Failed to save file to cloudinary');
+  }
+};
